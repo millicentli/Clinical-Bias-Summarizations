@@ -1,0 +1,28 @@
+Plan:
+
+Using the Mimic-CXR dataset
+- EHR data - Findings
+- Free text (natural language) reports - Impressions
+
+- or -
+
+Using the Mimic-III dataset
+- Demographic data
+    - Found in ADMISSIONS.csv.gz
+    - Gender, ethnicity, and age
+- Diagnoses
+    - Found in DIAGNOSES_ICD.csv.gz, D_ICD_DIAGNOSES.csv.gz
+- Procedures
+    - Found in PROCEDURES_ICD.csv.gz, D_ICD_PROCEDURES.csv.gz
+- Medications
+    - Found in INPUTEVENTS_CV.csv.gz and INPUTEVENTS_MV.csv.gz and D_ITEMS.csv.gz
+- Microbiology tests
+    - Found in MICROBIOLOGYEVENTS.csv.gz 
+- Laboratory tests
+    - Found in LABEEVENTS.csv.gz
+
+
+
+Six different experiments (four first):
+- Standard-BART
+    - Encode the EHR data, test on the reports

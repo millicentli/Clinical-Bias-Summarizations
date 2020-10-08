@@ -4,22 +4,33 @@ Using the Mimic-CXR dataset
 - EHR data - Findings
 - Free text (natural language) reports - Impressions
 
-- or -
+- and -
 
 Using the Mimic-III dataset
 - Demographic data
-    - Found in ADMISSIONS.csv.gz
+    - Found in ADMISSIONS.csv.gz (1), PATIENTS.csv.gz (2)
     - Gender, ethnicity, and age
+    - SUBJECT_ID (1), GENDER (2), ETHNICITY (1), ADMITTIME (1) - DOB (2)
 - Diagnoses
-    - Found in DIAGNOSES_ICD.csv.gz, D_ICD_DIAGNOSES.csv.gz
+    - Found in DIAGNOSES_ICD.csv.gz (1), D_ICD_DIAGNOSES.csv.gz (1)
+    - SUBJECT_ID, ICD9_CODE (1)
+    - ICD9_CODE, SHORT_TITLE (2), LONG_TITLE (2) (pick one)
 - Procedures
-    - Found in PROCEDURES_ICD.csv.gz, D_ICD_PROCEDURES.csv.gz
+    - Found in PROCEDURES_ICD.csv.gz (1), D_ICD_PROCEDURES.csv.gz (2)
+    - SUBJECT_ID, ICD9_CODE (1)
+    - ICD9_CODE, SHORT_TITLE (2), LONG_TITLE (2)
 - Medications
-    - Found in INPUTEVENTS_CV.csv.gz and INPUTEVENTS_MV.csv.gz and D_ITEMS.csv.gz
+    - Found in INPUTEVENTS_CV.csv.gz (1) and INPUTEVENTS_MV.csv.gz (2) and D_ITEMS.csv.gz (3)
+    - SUBJECT_ID, ITEMID (1), AMOUNT (1), AMOUNTUOM (1)
+    - SUBJECT_ID, ITEMID (2), AMOUNT (2), AMOUNTUOM (2)
+    - ITEMID, LABEL (3)
 - Microbiology tests
-    - Found in MICROBIOLOGYEVENTS.csv.gz 
+    - Found in MICROBIOLOGYEVENTS.csv.gz (1)
+    - SUBJECT_ID, SPEC_TYPE_DESC (1), ORG_NAME (1)
 - Laboratory tests
-    - Found in LABEEVENTS.csv.gz
+    - Found in LABEEVENTS.csv.gz (1), D_ITEMS.CSV.gz (2)
+    - SUBJECT_ID, ITEMID (1), VALUE/VALUENUM (1), VALUEUOM (1), FLAG (1)
+    - ITEMID, LABEL (2)
 
 
 

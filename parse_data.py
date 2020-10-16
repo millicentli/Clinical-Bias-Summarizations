@@ -27,6 +27,41 @@ def directory_crawl(src, dst, symlinks=False, ignore=None):
                             os.makedirs(dst)
                         shutil.copy2(s, d)
 
+# Check the files in the same folder and paste things into a single file
+def consolidate(src, dst):
+    for item in os.listdir(src):
+        # Get the path for the file
+        s = os.path.join(src, item)
+        # print("here is s:", s)
+        # print("here is dst:", dst)
+        with open(s, 'r') as f:
+            with open(dst, 'a') as f1:
+                doc = " "
+                summary = " "
+                check_sum = False
+                for line in f:
+                    stripped = line.strip()
+                    if len(stripped) == 0:
+                        continue
+                   
+                    '''
+                    index = stripped.find(":")
+                    if index != -1:
+                        stripped = stripped[index + 1:]
+                        print("here's the line", stripped)
+                    '''
+                    if "IMPRESSION" in line:
+                        check_sum = True
+                    if check_sum:
+                        summary = summary + stripped + " "
+                    else:
+                        doc = doc + stripped + " "
+                # print("hello")
+                # print("here is the doc: " + str(doc))
+                # print("here is the summary: " + str(summary))
+                f1.write(doc + "\t")
+                f1.write("\n")
+
 if __name__ == "__main__":
 
     # start directory crawling for MIMIC-CXR, putting the text files in one folder
@@ -37,6 +72,9 @@ if __name__ == "__main__":
             s = "p" + str(i)
             print("directory: " +  s)
             directory_crawl("/data2/limill01/Clinical-Bias-Summarizations/mimic-cxr/files/" + s, dst)
+    # clean the data and put into a single file
     else:
-        raise NotImplemented
-        
+        dst = "mimic-cxr/files/data.txt"
+        src = "mimic-cxr/files/filtered/"
+        consolidate(src, dst)
+

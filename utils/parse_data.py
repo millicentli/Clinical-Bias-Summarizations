@@ -54,26 +54,29 @@ def consolidate(src, dst):
                 f1.write("\n")
 
 def clean_cxr(filename):
-    # Read from the file
+    # Read from the file and put into arrays
     doc = []
     summary = []
     with open(filename, 'r') as f:
         for line in f:
-            print("line pre-split:", line)
             split = line.split('\t')
-            print("here's split:", split)
             doc.append(split[0])
             summary.append(split[1])
-            print("line 1:", split[0])
-            print("line 2:", split[1])
-            exit()
     
+    return doc, summary
+
+def find_longest_text_len(doc):
+    maxs = float('-inf')
+    for i in doc:
+        maxs = max(len(i), maxs)
+    return maxs
+        
 if __name__ == "__main__":
     # testing - no other purpose
 
     # start directory crawling for MIMIC-CXR, putting the text files in one folder
     if args.crawl:
-        dst = "mimic-cxr/files/filtered/"
+        dst = "../mimic-cxr/files/filtered/"
 
         for i in range(10, 20):
             s = "p" + str(i)
@@ -81,8 +84,9 @@ if __name__ == "__main__":
             directory_crawl("/data2/limill01/Clinical-Bias-Summarizations/mimic-cxr/files/" + s, dst)
     # clean the data and put into a single file
     else:
-        dst = "mimic-cxr/files/data.txt"
-        src = "mimic-cxr/files/filtered/"
+        dst = "../mimic-cxr/files/data.txt"
+        src = "../mimic-cxr/files/filtered/"
         # consolidate(src, dst)
-        #clean_cxr(dst)
-
+        doc, summary = clean_cxr(dst)
+        print("size of doc:", len(doc))
+        print("size of summary:", len(summary))

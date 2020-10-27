@@ -32,8 +32,12 @@ Using the Mimic-III dataset
     - SUBJECT_ID, ITEMID (1), VALUE/VALUENUM (1), VALUEUOM (1), FLAG (1)
     - ITEMID, LABEL (2)
 
-
-
 Six different experiments (four first):
 - Standard-BART
-    - Encode the EHR data, test on the reports
+    - Encode the data, test on the reports
+- TAPT-BART
+    - Encode the data, TAPT and test on reports
+- FT-BART
+    - Encode the data, FT and test on reports
+- TAPT-FT-BART
+    - Encode the data, TAPT and fine-tune and test on reports

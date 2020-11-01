@@ -47,13 +47,69 @@ class TestDataset(Dataset):
 
         return _id, _mask
 
-def train(model, train_dat, dev_dat, tokenizer):
-    raise NotImplemented
+def train(model, tokenizer, inputs):
+    dataset = Dataset(inputs['input_ids'], inputs['attention_mask'], inputs['labels'])
+
+    # change this batch_size to args
+    train_dataloader = DataLoader(dataset, shuffle=False, batch_size=1)
+
+    # change this epochs to args
+    num_trained_epochs = 10# args.epochs
+
+    global_step = 0
+    epochs_trained = 0
+    tr_loss = 0
+
+    model.to(device)
+    model.zero_grad()
+
+    params = [p for n,p in model.named_parameters()]
+    # change this lr to args
+    optimizer = AdamW(params, lr=0.001)
+    train_iterator = trange(epochs_trained, int(num_trained_epochs), desc="Epoch")
+
+    for idx, _ in enumerate(train_iterator):
+        epoch_iterator = tqdm(train_dataloader, desc="Iteration")
+        for step, batch in enumerate(epoch_iterator):
+            model.train()
+
+            batch = tuple(t.to(device) for t in batch)
+            inputs = batch[0]
+            atten = batch[1]
+            labels = batch[2]
+
+            outputs = model(input_ids=inputs, attention_mask=atten, labels=labels)
+            loss = outputs[0]
+
+            loss.backward()
+            tr_loss += loss.item()
+
+            # change this grad clipping args.grad_clip to args
+            torch.nn.utils.clip_grad_norm(model.parameters(), 0.25)
+            optimizer.step()
+
+            model.zero_grad()
+            global_step += 1
+
+            if (len(epoch_iterator) == step + 1):
+                # writer.add_scalar('train loss', tr_loss / global_step, global_step)
+                exit()
+                # save the model, then run on the development set
+                torch.save(model, "models_std/std_pos_model_" + str(idx))
+                print(f"Epoch: {epochs_trained}, Step: {step}, Loss: {tr_loss / global_step}")
+
+                # test on dev set
+                # dev(model, dev_dat, dev_mappings, tokenizer, idx)
+
+                # load back the original model
+                # model = torch.load("pos_model_" + str(idx), map_location="cpu")
+                # model.to(device)
+        epochs_trained += 1
 
 def dev(model, dev_dat, tokenizer):
     raise NotImplemented
 
-def evals(model, tokenizer, inputs, doc, summary):
+def evals(model, tokenizer, inputs):
     print("here are the inputs:", inputs)
     #exit()
 

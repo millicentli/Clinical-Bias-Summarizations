@@ -41,3 +41,9 @@ Six different experiments (four first):
     - Encode the data, FT and test on reports
 - TAPT-FT-BART
     - Encode the data, TAPT and fine-tune and test on reports
+
+
+How does evaluation work?
+- Get the ROUGE score (?) <-- prior work does not use this
+- Log probabilities
+- Test with the generation task used in Hurtful Words

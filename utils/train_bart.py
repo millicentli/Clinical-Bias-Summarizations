@@ -1,4 +1,4 @@
-# For only training, evaluation, testing BART
+# For training BART with select evaluation methods
 
 import torch
 import numpy as np
@@ -47,14 +47,14 @@ class TestDataset(Dataset):
 
         return _id, _mask
 
-def train(model, tokenizer, inputs):
+def train(model, tokenizer, inputs, batch_size, num_trained_epochs, learning_rate, grad_clip):
     dataset = Dataset(inputs['input_ids'], inputs['attention_mask'], inputs['labels'])
 
     # change this batch_size to args
-    train_dataloader = DataLoader(dataset, shuffle=False, batch_size=1)
+    train_dataloader = DataLoader(dataset, shuffle=False, batch_size=batch_size)
 
     # change this epochs to args
-    num_trained_epochs = 10# args.epochs
+    num_trained_epochs = num_trained_epochs
 
     global_step = 0
     epochs_trained = 0
@@ -65,7 +65,7 @@ def train(model, tokenizer, inputs):
 
     params = [p for n,p in model.named_parameters()]
     # change this lr to args
-    optimizer = AdamW(params, lr=0.001)
+    optimizer = AdamW(params, lr=learning_rate)
     train_iterator = trange(epochs_trained, int(num_trained_epochs), desc="Epoch")
 
     for idx, _ in enumerate(train_iterator):
@@ -85,7 +85,7 @@ def train(model, tokenizer, inputs):
             tr_loss += loss.item()
 
             # change this grad clipping args.grad_clip to args
-            torch.nn.utils.clip_grad_norm(model.parameters(), 0.25)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
             optimizer.step()
 
             model.zero_grad()
@@ -109,13 +109,39 @@ def train(model, tokenizer, inputs):
 def dev(model, dev_dat, tokenizer):
     raise NotImplemented
 
-def evals(model, tokenizer, inputs):
+# Evaluation then is twofold: Extract/save representation, then use it within the FC network
+# Eval --> Extract the representation from BART --> save it, use it for FC network
+def evals(model, tokenizer, inputs, batch_size, data, labels):
+    dataset = Dataset(inputs['input_ids'], inputs['attention_mask'], inputs['labels'])
+    test_dataloader = DataLoader(dataset, shuffle=False, batch_size=batch_size)
+
+    nb_eval_step = 0
+    eval_loss = 0.0
+
+    model.to(device)
+    model.eval()
+    for batch in tqdm(test_dataloader):
+        batch = tuple(t.to(device) for t in batch)
+        
+        with torch.no_grad():
+            inputs = batch[0]
+            atten = batch[1]
+            # Save this label in the h5py
+            labels = batch[2]
+
+            outputs = model(input_ids=inputs, attention_mask=atten)
+            tmp_eval_loss, logits = outputs[:2]
+
+            # Get the representations, save as h5py?
+
+
+'''
+def evals(model, tokenizer, inputs, batch_size):
     print("here are the inputs:", inputs)
     #exit()
 
     dataset = Dataset(inputs['input_ids'], inputs['attention_mask'], inputs['labels'])
-    #dataset = TestDataset(inputs['input_ids'], inputs['attention_mask'], inputs['labels'])
-    test_dataloader = DataLoader(dataset, shuffle=False, batch_size=16)
+    test_dataloader = DataLoader(dataset, shuffle=False, batch_size=batch_size)
 
     total = 0
     correct = 0
@@ -138,6 +164,8 @@ def evals(model, tokenizer, inputs):
         exit()
     
     raise NotImplemented
+
+'''
 
 def test():
     print("test successful")
